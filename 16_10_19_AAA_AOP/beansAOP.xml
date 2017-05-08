@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/data/mongo
+    http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+	<!-- Configure the Mongo Server -->
+	<bean id="uri" class="com.mongodb.MongoClientURI">
+		<constructor-arg name="uri"
+			value="mongodb://root:Paris2005@ds053126.mlab.com:53126/katrin_litv" />
+	</bean>
+	<!-- Берется из драйвера -->
+	<bean id="mongo" class="com.mongodb.MongoClient">
+		<constructor-arg name="uri" ref="uri" />
+	</bean>
+	<!-- Берется из депендеси в поме -->
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg ref="mongo" />
+		<constructor-arg name="databaseName" value="katrin_litv" />
+	</bean>
+
+	<mongo:repositories base-package="tel_ran.security.repo"></mongo:repositories>
+	<!-- Спринг заходит в каждый класс и ищет аннотации -->
+	<context:annotation-config />	
+	<bean id="authentBean" class="tel_ran.security.Authentificater">
+		<constructor-arg name="rulesPasswords">
+			<map>
+				<entry key="admin" value="1234" />
+				<entry key="user2" value="2345" />
+				<entry key="user3" value="3456" />
+				<entry key="user4" value="4567" />
+			</map>
+		</constructor-arg>
+	</bean>
+	<bean id="authorize" class="tel_ran.security.aop.Authorizer">
+		<constructor-arg name="rulesMethods">
+			<map value-type="java.lang.String">
+				<entry key="admin">
+					<set>
+						<value>set1</value>
+						<value>set2</value>
+						<value>get1</value>
+					</set>
+				</entry>
+				<entry key="user2">
+					<set>
+						<value>set2</value>
+					</set>
+				</entry>
+				<entry key="user3">
+					<set>
+						<value>get1</value>
+					</set>
+				</entry>
+				<entry key="user4">
+					<set>
+						<value>get1</value>
+					</set>
+				</entry>
+			</map>
+		</constructor-arg>
+		<constructor-arg name="authent" ref="authentBean"></constructor-arg>
+		<constructor-arg name="accounter" ref="acc"></constructor-arg>
+	</bean>
+	
+	
+	<aop:config>
+		<aop:aspect ref="authorize">
+			<aop:pointcut
+				expression="execution(public * tel_ran.application.ApplicationClass.*(..)) and not execution ( public * login(..))"
+				id="auth" />
+			<aop:around method="authorize" pointcut-ref="auth" />
+		</aop:aspect>
+	</aop:config>
+	<bean id="appl" class="tel_ran.application.ApplicationClass"
+		scope="prototype">
+		<constructor-arg name="authent" ref="authentBean"></constructor-arg>
+	</bean>
+	<bean id="acc" class="tel_ran.security.Accounter" init-method="restoreMap"
+		destroy-method="saveUpdatedMap">
+		<constructor-arg name="fileName" value="fileAccount.txt"></constructor-arg>
+	</bean>
+</beans>
+

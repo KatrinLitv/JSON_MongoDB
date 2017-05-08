@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+   http://www.springframework.org/schema/aop
+   http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+	<bean id="validationAspect" class="tel_ran.aop.validation.VulgarWordsValidation">
+	</bean>
+	<!-- подключение платформы aspectj через прокси -->
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	<!-- конфигурация аоп должна быть только одна (одна платформа для одной 
+		аппликации) -->
+	<aop:config>
+		<!-- М.б. несколько аспектов (аспект - это КЛАСС, на кот указ. реф) -->
+		<!-- значение атрибута id в элте <bean> описывающем класс аспект -->
+		<aop:aspect ref="validationAspect"> <!--reference to aspect -->
+			<!-- Все методы кроме аспекта, описанные в бинах) -->
+			<!-- м.б. несколько expression, они обрабатываются как ИЛИ -->
+			<aop:pointcut expression="execution(public * *(..)) and not execution(* reply*(..))" id="allFunctions" />
+			<!-- method - имя метода класса, описанного в эл-те <bean> с id = "validationAspect" -->
+			<aop:around method="validate" pointcut-ref="allFunctions" />
+		</aop:aspect>
+	</aop:config>
+	<bean id="chat" class="tel_ran.chat.ChatRoom"></bean>
+</beans>

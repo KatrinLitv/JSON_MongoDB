@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+   http://www.springframework.org/schema/aop
+   http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+	<bean id="validationAspect" class="tel_ran.aop.validation.VulgarWordsValidation">
+		<constructor-arg name="words">
+			<array value-type="java.lang.String">
+				<value>word1</value>
+				<value>word2</value>
+				<value>word3</value>
+			</array>
+		</constructor-arg>
+		<constructor-arg name="strNew" value="####"></constructor-arg>
+	</bean>
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	<aop:config>
+		<aop:aspect ref="validationAspect"> <!--reference to aspect -->
+			<aop:pointcut
+				expression="execution(public * *(..)) and not execution(* reply*(..))"
+				id="allFunctions" />
+			<aop:around method="validate" pointcut-ref="allFunctions" />
+		</aop:aspect>
+	</aop:config>
+	
+	<bean id="chat" class="tel_ran.chat.ChatRoom"></bean>
+	
+	<bean id="benchMark" class="tel_ran.aop.benchmarking.PerformanceTest"></bean>
+	<aop:config>
+		<aop:aspect ref="benchMark">
+		<aop:pointcut expression="execution(* reply*(..))" id="reply"/>
+		<aop:around method="watchPerformance" pointcut-ref="reply"/>
+		</aop:aspect>
+	</aop:config>
+</beans>
+
