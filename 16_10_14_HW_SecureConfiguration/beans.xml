@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd ">
+	<!-- формируем Map юзеров -->
+	<bean id="userMap" class="SecureConfiguration">
+		<constructor-arg name="userMap">
+			<map>
+				<entry key="Ivanov" value="1234" />
+				<entry key="Petrov" value="2345" />
+				<entry key="Sidorov" value="3456" />
+			</map>
+		</constructor-arg>		
+	</bean>
+</beans>

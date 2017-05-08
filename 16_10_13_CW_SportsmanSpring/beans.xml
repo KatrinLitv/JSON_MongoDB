@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd ">
+
+	<!--<bean id="sportsman" class="tel_ran.sportsman.implementation.Footballer">
+		 вызов сеттера -->
+		<!-- <property name="speed"> <value>40</value> </property> -->
+		<!-- вызов конструктора с полями -->
+		<!-- <constructor-arg name="team" value="Real"></constructor-arg> -->
+		<!-- если пусто, вызывается конструктор по умолчанию 
+	</bean> -->
+
+	<bean id="footballer1" class="tel_ran.sportsman.implementation.Footballer">
+		<constructor-arg name="team" value="Real"></constructor-arg>
+	</bean>
+	<bean id="footballer2" class="tel_ran.sportsman.implementation.Footballer">
+		<constructor-arg name="team" value="Dinamo"></constructor-arg>
+	</bean>
+	<bean id="footballer3" class="tel_ran.sportsman.implementation.Footballer">
+		<constructor-arg name="team" value="Spartak"></constructor-arg>
+	</bean>
+	<bean id="runner1" class="tel_ran.sportsman.implementation.Runner">
+		<constructor-arg name="speed" value="40"></constructor-arg>
+	</bean>
+	<bean id="runner2" class="tel_ran.sportsman.implementation.Runner">
+		<constructor-arg name="speed" value="30"></constructor-arg>
+	</bean>
+	<bean id="runner3" class="tel_ran.sportsman.implementation.Runner">
+	</bean>
+	<!-- формируем массив спортсменов для OlympicTeam -->
+	<bean id="team" class="tel_ran.sportsman.implementation.OlympicTeam">
+		<constructor-arg name="team">
+			<array>
+				<ref bean="footballer1" />
+				<ref bean="footballer2" />
+				<ref bean="footballer3" />
+				<ref bean="runner1" />
+				<ref bean="runner2" />
+				<ref bean="runner3" />
+			</array>
+		</constructor-arg>
+	</bean>
+</beans>
